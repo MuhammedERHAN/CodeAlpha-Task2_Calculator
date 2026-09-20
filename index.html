@@ -1,0 +1,646 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="Wander — a responsive image gallery with lightbox, category filters and smooth transitions. Built for CodeAlpha Internship."
+    />
+    <title>Wander — Premium Image Gallery</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@600;700;800&family=Inter:wght@400;500;600&display=swap"
+      rel="stylesheet"
+    />
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              accent: "#8b7bff",
+              "accent-light": "#a89bff",
+              ink: "#0e0e12",
+              card: "#17171d",
+            },
+            fontFamily: {
+              sans: ["Inter", "sans-serif"],
+              display: ["Poppins", "sans-serif"],
+            },
+            keyframes: {
+              fadeInUp: {
+                "0%": { opacity: 0, transform: "translateY(24px)" },
+                "100%": { opacity: 1, transform: "translateY(0)" },
+              },
+              shimmer: {
+                "0%, 100%": { backgroundPosition: "0% 50%" },
+                "50%": { backgroundPosition: "100% 50%" },
+              },
+            },
+            animation: {
+              "fade-in-up": "fadeInUp 0.7s cubic-bezier(0.16,1,0.3,1) forwards",
+              shimmer: "shimmer 1.5s ease-in-out infinite",
+            },
+          },
+        },
+      };
+    </script>
+
+    <style>
+      /* Only things Tailwind has no utility for at all */
+      ::-webkit-scrollbar {
+        width: 8px;
+        height: 8px;
+      }
+      ::-webkit-scrollbar-track {
+        background: #0e0e12;
+      }
+      ::-webkit-scrollbar-thumb {
+        background: rgba(139, 123, 255, 0.3);
+        border-radius: 100px;
+      }
+      ::-webkit-scrollbar-thumb:hover {
+        background: rgba(139, 123, 255, 0.5);
+      }
+
+      .keyboard-hover {
+        background-color: #8b7bff !important;
+        color: #0e0e12 !important;
+        border-color: #8b7bff !important;
+        transform: translateY(-50%) scale(1.1) !important;
+      }
+      .keyboard-hover-close {
+        background-color: rgba(239, 68, 68, 0.85) !important;
+        border-color: rgb(239, 68, 68) !important;
+        color: white !important;
+        transform: rotate(180deg) scale(1.1) !important;
+      }
+      #prevBtn,
+      #nextBtn,
+      #closeBtn {
+        transition:
+          background-color 0.25s ease,
+          color 0.25s ease,
+          transform 0.25s ease,
+          border-color 0.25s ease;
+      }
+    </style>
+  </head>
+
+  <body
+    class="font-sans text-white min-h-screen bg-[#0e0e12] bg-[image:radial-gradient(circle_at_15%_0%,rgba(139,123,255,0.12),transparent_40%),radial-gradient(circle_at_85%_20%,rgba(139,123,255,0.08),transparent_35%)]"
+  >
+    <!-- Header -->
+    <header class="text-center px-4 pt-14 pb-8 animate-fade-in-up">
+      <p class="uppercase tracking-[0.3em] text-xs text-gray-500 mb-3">
+        A Visual Journal
+      </p>
+      <h1
+        class="font-display font-extrabold mb-2 text-[clamp(2.75rem,9vw,5rem)] leading-tight tracking-tight bg-gradient-to-br from-white to-accent-light bg-clip-text text-transparent"
+      >
+        Wander
+      </h1>
+      <p class="text-gray-400 text-sm max-w-md mx-auto">
+        Frames collected from the road — mountains, cities, faces and wild
+        things.
+      </p>
+    </header>
+
+    <!-- Filters -->
+    <nav
+      class="flex justify-center gap-2 flex-wrap mb-3 px-4 animate-fade-in-up"
+      id="filters"
+      aria-label="Image filters"
+      style="animation-delay: 0.1s"
+    >
+      <button
+        class="filter-btn px-5 py-2 rounded-full text-[13px] font-semibold tracking-wide border border-accent bg-accent text-ink shadow-[0_4px_24px_rgba(139,123,255,0.3)] transition-all duration-300 focus-visible:outline focus-visible:outline-2 focus-visible:outline-accent focus-visible:outline-offset-2"
+        data-filter="all"
+        aria-pressed="true"
+      >
+        All
+      </button>
+      <button
+        class="filter-btn px-5 py-2 rounded-full text-[13px] font-medium tracking-wide border border-white/5 bg-card/60 text-gray-400 transition-all duration-300 hover:border-accent hover:text-white hover:bg-accent/10 hover:-translate-y-0.5 focus-visible:outline focus-visible:outline-2 focus-visible:outline-accent focus-visible:outline-offset-2"
+        data-filter="nature"
+        aria-pressed="false"
+      >
+        Nature
+      </button>
+      <button
+        class="filter-btn px-5 py-2 rounded-full text-[13px] font-medium tracking-wide border border-white/5 bg-card/60 text-gray-400 transition-all duration-300 hover:border-accent hover:text-white hover:bg-accent/10 hover:-translate-y-0.5 focus-visible:outline focus-visible:outline-2 focus-visible:outline-accent focus-visible:outline-offset-2"
+        data-filter="city"
+        aria-pressed="false"
+      >
+        City
+      </button>
+      <button
+        class="filter-btn px-5 py-2 rounded-full text-[13px] font-medium tracking-wide border border-white/5 bg-card/60 text-gray-400 transition-all duration-300 hover:border-accent hover:text-white hover:bg-accent/10 hover:-translate-y-0.5 focus-visible:outline focus-visible:outline-2 focus-visible:outline-accent focus-visible:outline-offset-2"
+        data-filter="portrait"
+        aria-pressed="false"
+      >
+        Portrait
+      </button>
+      <button
+        class="filter-btn px-5 py-2 rounded-full text-[13px] font-medium tracking-wide border border-white/5 bg-card/60 text-gray-400 transition-all duration-300 hover:border-accent hover:text-white hover:bg-accent/10 hover:-translate-y-0.5 focus-visible:outline focus-visible:outline-2 focus-visible:outline-accent focus-visible:outline-offset-2"
+        data-filter="animals"
+        aria-pressed="false"
+      >
+        Animals
+      </button>
+    </nav>
+
+    <p
+      class="text-center mb-8 animate-fade-in-up"
+      style="animation-delay: 0.15s"
+    >
+      <span
+        id="count-label"
+        class="inline-block bg-accent/10 px-5 py-1.5 rounded-full border border-white/5 text-xs text-gray-400"
+      >
+        Showing 12 of 12 frames
+      </span>
+    </p>
+
+    <!-- Gallery -->
+    <main class="max-w-6xl mx-auto px-4 pb-16">
+      <div
+        id="gallery"
+        class="columns-1 sm:columns-2 lg:columns-3 xl:columns-4 gap-5"
+      ></div>
+    </main>
+
+    <!-- Lightbox -->
+    <div
+      id="lightbox"
+      role="dialog"
+      aria-hidden="true"
+      aria-modal="true"
+      aria-label="Image preview"
+      class="fixed inset-0 z-[999] flex items-center justify-center p-5 bg-black/90 backdrop-blur-md opacity-0 invisible transition-all duration-300 touch-none"
+    >
+      <button
+        id="closeBtn"
+        aria-label="Close preview"
+        title="Close (Esc)"
+        class="absolute top-4 right-4 z-10 w-11 h-11 rounded-full bg-white/20 backdrop-blur-sm border border-white/20 text-white text-2xl flex items-center justify-center transition-all duration-300 hover:bg-red-500/80 hover:rotate-90 focus-visible:outline focus-visible:outline-2 focus-visible:outline-accent focus-visible:outline-offset-2"
+      >
+        &times;
+      </button>
+      <button
+        id="prevBtn"
+        aria-label="Previous image"
+        title="Previous (←)"
+        class="absolute left-4 top-1/2 -translate-y-1/2 z-10 w-12 h-12 rounded-full bg-white/20 backdrop-blur-sm border border-white/20 text-white text-xl flex items-center justify-center transition-all duration-300 hover:bg-accent hover:text-ink hover:scale-110 active:scale-95 focus-visible:outline focus-visible:outline-2 focus-visible:outline-accent focus-visible:outline-offset-2"
+      >
+        &#10094;
+      </button>
+
+      <div class="relative max-w-[90vw] max-h-[90vh] text-center">
+        <img
+          id="lightbox-img"
+          src=""
+          alt=""
+          class="max-h-[70vh] max-w-[85vw] object-contain rounded-xl shadow-2xl mx-auto transition-all duration-500 ease-[cubic-bezier(0.22,1,0.36,1)]"
+        />
+        <p id="lb-title" class="font-display text-lg font-bold mt-4"></p>
+        <p id="lb-counter" class="text-sm text-gray-400"></p>
+        <div
+          class="w-56 h-1.5 bg-white/10 rounded-full overflow-hidden mx-auto mt-4"
+        >
+          <div
+            id="progressBar"
+            class="h-full bg-gradient-to-r from-accent to-accent-light rounded-full transition-all duration-500"
+            style="width: 0%"
+          ></div>
+        </div>
+      </div>
+
+      <button
+        id="nextBtn"
+        aria-label="Next image"
+        title="Next (→)"
+        class="absolute right-4 top-1/2 -translate-y-1/2 z-10 w-12 h-12 rounded-full bg-white/20 backdrop-blur-sm border border-white/20 text-white text-xl flex items-center justify-center transition-all duration-300 hover:bg-accent hover:text-ink hover:scale-110 active:scale-95 focus-visible:outline focus-visible:outline-2 focus-visible:outline-accent focus-visible:outline-offset-2"
+      >
+        &#10095;
+      </button>
+    </div>
+
+    <footer
+      class="text-xs sm:text-sm text-gray-600 leading-relaxed text-center pb-10"
+    >
+      Built with ❤️ for CodeAlpha Internship · Image Gallery Task
+    </footer>
+    <script>
+      // ============================================================
+      // DATA
+      // ============================================================
+      const images = [
+        {
+          src: "https://picsum.photos/seed/mountain1/600/450",
+          cat: "nature",
+          title: "Alpine Ridge",
+          sub: "Dolomites, Italy",
+          w: 600,
+          h: 450,
+        },
+        {
+          src: "https://picsum.photos/seed/forest1/600/800",
+          cat: "nature",
+          title: "Mossy Path",
+          sub: "Olympic NP, USA",
+          w: 600,
+          h: 800,
+        },
+        {
+          src: "https://picsum.photos/seed/lake1/600/500",
+          cat: "nature",
+          title: "Glacial Lake",
+          sub: "Patagonia, Chile",
+          w: 600,
+          h: 500,
+        },
+        {
+          src: "https://picsum.photos/seed/city1/600/700",
+          cat: "city",
+          title: "Glass Skyline",
+          sub: "Singapore",
+          w: 600,
+          h: 700,
+        },
+        {
+          src: "https://picsum.photos/seed/street1/600/450",
+          cat: "city",
+          title: "Rainy Crossing",
+          sub: "Tokyo, Japan",
+          w: 600,
+          h: 450,
+        },
+        {
+          src: "https://picsum.photos/seed/bridge1/600/550",
+          cat: "city",
+          title: "Steel & Fog",
+          sub: "San Francisco, USA",
+          w: 600,
+          h: 550,
+        },
+        {
+          src: "https://picsum.photos/seed/face1/600/580",
+          cat: "portrait",
+          title: "Quiet Gaze",
+          sub: "Marrakech, Morocco",
+          w: 600,
+          h: 580,
+        },
+        {
+          src: "https://picsum.photos/seed/face2/600/750",
+          cat: "portrait",
+          title: "Market Vendor",
+          sub: "Jaipur, India",
+          w: 600,
+          h: 750,
+        },
+        {
+          src: "https://picsum.photos/seed/face3/600/480",
+          cat: "portrait",
+          title: "Fisherman's Rest",
+          sub: "Lofoten, Norway",
+          w: 600,
+          h: 480,
+        },
+        {
+          src: "https://picsum.photos/seed/fox1/600/450",
+          cat: "animals",
+          title: "Red Fox at Dusk",
+          sub: "Yukon, Canada",
+          w: 600,
+          h: 450,
+        },
+        {
+          src: "https://picsum.photos/seed/owl1/600/550",
+          cat: "animals",
+          title: "Snowy Owl",
+          sub: "Iceland",
+          w: 600,
+          h: 550,
+        },
+        {
+          src: "https://picsum.photos/seed/elephant1/600/700",
+          cat: "animals",
+          title: "Herd at Sunrise",
+          sub: "Serengeti, Tanzania",
+          w: 600,
+          h: 700,
+        },
+      ];
+      // ============================================================
+      // CLASS STRINGS (kept as JS constants so filter active/inactive
+      // states are still pure Tailwind utility classes, just swapped in JS)
+      // ============================================================
+      const FILTER_ACTIVE =
+        "filter-btn px-5 py-2 rounded-full text-[13px] font-semibold tracking-wide border border-accent bg-accent text-ink shadow-[0_4px_24px_rgba(139,123,255,0.3)] transition-all duration-300 focus-visible:outline focus-visible:outline-2 focus-visible:outline-accent focus-visible:outline-offset-2";
+      const FILTER_INACTIVE =
+        "filter-btn px-5 py-2 rounded-full text-[13px] font-medium tracking-wide border border-white/5 bg-card/60 text-gray-400 transition-all duration-300 hover:border-accent hover:text-white hover:bg-accent/10 hover:-translate-y-0.5 focus-visible:outline focus-visible:outline-2 focus-visible:outline-accent focus-visible:outline-offset-2";
+
+      const IMG_WRAP_LOADING =
+        "relative overflow-hidden bg-gradient-to-br from-[#1a1a24] to-[#2a2a35] bg-[length:200%_200%] animate-shimmer";
+      const IMG_WRAP_LOADED = "relative overflow-hidden";
+
+      // ============================================================
+      // DOM REFS
+      // ============================================================
+      const gallery = document.getElementById("gallery");
+      const countLabel = document.getElementById("count-label");
+      const lightbox = document.getElementById("lightbox");
+      const lightboxImg = document.getElementById("lightbox-img");
+      const lbTitle = document.getElementById("lb-title");
+      const lbCounter = document.getElementById("lb-counter");
+      const closeBtn = document.getElementById("closeBtn");
+      const prevBtn = document.getElementById("prevBtn");
+      const nextBtn = document.getElementById("nextBtn");
+      const filterBtns = document.querySelectorAll(".filter-btn");
+      const progressBar = document.getElementById("progressBar");
+
+      // ============================================================
+      // STATE
+      // ============================================================
+      let filteredIndexes = images.map((_, i) => i);
+      let queuePointer = 0;
+      let lastFocusedElement = null;
+      let isNavigating = false;
+      // Swipe support
+      let touchStartX = 0;
+      let touchEndX = 0;
+
+      // ============================================================
+      // RENDER GALLERY
+      // ============================================================
+      function renderGallery() {
+        images.forEach((item, idx) => {
+          const wrapper = document.createElement("div");
+          wrapper.className =
+            "gallery-item break-inside-avoid mb-5 rounded-2xl overflow-hidden border border-white/5 bg-card cursor-pointer transition-all duration-500 ease-out hover:-translate-y-1.5 hover:shadow-[0_20px_40px_-15px_rgba(139,123,255,0.35)] group animate-fade-in-up focus-visible:outline focus-visible:outline-2 focus-visible:outline-accent focus-visible:outline-offset-2";
+          wrapper.style.animationDelay = `${idx * 0.05}s`;
+          wrapper.dataset.cat = item.cat;
+          wrapper.dataset.index = idx;
+          wrapper.setAttribute("role", "button");
+          wrapper.setAttribute("tabindex", "0");
+          wrapper.setAttribute("aria-label", `View ${item.title}`);
+
+          wrapper.innerHTML = `
+                  <div class="img-wrap ${IMG_WRAP_LOADING}">
+                    <img src="${item.src}" width="${item.w}" height="${item.h}" alt="${item.title} - ${item.sub}" loading="lazy" decoding="async"
+                      class="w-full block transition-transform duration-700 ease-out group-hover:scale-105 group-hover:saturate-[1.15]" />
+                    <span class="absolute top-3 right-3 px-3 py-1 bg-black/70 backdrop-blur-sm rounded-full text-[10px] font-semibold uppercase tracking-wide text-gray-400 border border-white/5 transition-colors duration-300 group-hover:bg-accent group-hover:text-ink group-hover:border-accent">
+                      ${item.cat}
+                    </span>
+                    <div class="absolute bottom-0 left-0 right-0 px-5 pt-8 pb-4 bg-gradient-to-t from-black/90 to-transparent translate-y-full max-sm:translate-y-0 transition-transform duration-300 ease-out group-hover:translate-y-0">
+                      <h2 class="font-display text-sm font-bold">${item.title}</h2>
+                      <p class="text-xs text-gray-400">${item.sub}</p>
+                    </div>
+                  </div>
+                `;
+
+          const imgEl = wrapper.querySelector("img");
+          const imgWrap = wrapper.querySelector(".img-wrap");
+          const markLoaded = () =>
+            (imgWrap.className = `img-wrap ${IMG_WRAP_LOADED}`);
+          imgEl.addEventListener("load", markLoaded);
+          if (imgEl.complete) markLoaded();
+
+          wrapper.addEventListener("click", () => {
+            const globalIdx = Number(wrapper.dataset.index);
+            queuePointer = filteredIndexes.indexOf(globalIdx);
+            if (queuePointer === -1) queuePointer = 0;
+            openLightbox();
+          });
+
+          wrapper.addEventListener("keydown", (e) => {
+            if (e.key === "Enter" || e.key === " ") {
+              e.preventDefault();
+              wrapper.click();
+            }
+          });
+
+          gallery.appendChild(wrapper);
+        });
+
+        updateCount();
+      }
+
+      // ============================================================
+      // FILTERS
+      // ============================================================
+      function applyFilter(filter) {
+        const allItems = document.querySelectorAll(".gallery-item");
+        const newFiltered = [];
+
+        allItems.forEach((item) => {
+          const match = filter === "all" || item.dataset.cat === filter;
+          if (match) {
+            item.classList.remove("hidden");
+            requestAnimationFrame(() =>
+              item.classList.remove("opacity-0", "scale-95"),
+            );
+            newFiltered.push(Number(item.dataset.index));
+          } else {
+            item.classList.add("opacity-0", "scale-95");
+            setTimeout(() => item.classList.add("hidden"), 300);
+          }
+        });
+
+        filteredIndexes = newFiltered;
+        if (queuePointer >= filteredIndexes.length) queuePointer = 0;
+        updateCount();
+      }
+
+      function updateCount() {
+        countLabel.textContent = `Showing ${filteredIndexes.length} of ${images.length} frames`;
+      }
+
+      filterBtns.forEach((btn) => {
+        btn.addEventListener("click", () => {
+          filterBtns.forEach((b) => {
+            b.className = FILTER_INACTIVE;
+            b.setAttribute("aria-pressed", "false");
+          });
+          btn.className = FILTER_ACTIVE;
+          btn.setAttribute("aria-pressed", "true");
+          applyFilter(btn.dataset.filter);
+        });
+      });
+
+      // ============================================================
+      // LIGHTBOX
+      // ============================================================
+      function renderLightboxImage() {
+        const actualIdx = filteredIndexes[queuePointer];
+        const item = images[actualIdx];
+        if (!item) return;
+
+        // Hide current image before changing
+        lightboxImg.classList.add("opacity-0", "scale-95", "blur-[2px]");
+
+        // Wait one frame for smooth transition
+        requestAnimationFrame(() => {
+          lightboxImg.src = item.src;
+          lightboxImg.alt = `${item.title} - ${item.sub}`;
+
+          lightboxImg.onload = () => {
+            lightboxImg.classList.remove("opacity-0", "scale-95", "blur-[2px]");
+          };
+        });
+
+        lbTitle.textContent = item.title;
+
+        lbCounter.textContent = `${queuePointer + 1} of ${filteredIndexes.length} — ${item.sub}`;
+
+        progressBar.style.width =
+          ((queuePointer + 1) / filteredIndexes.length) * 100 + "%";
+
+        // ===============================
+        // PRELOAD NEXT & PREVIOUS IMAGES
+        // ===============================
+
+        const nextIndex =
+          filteredIndexes[(queuePointer + 1) % filteredIndexes.length];
+
+        const prevIndex =
+          filteredIndexes[
+            (queuePointer - 1 + filteredIndexes.length) % filteredIndexes.length
+          ];
+
+        new Image().src = images[nextIndex].src;
+        new Image().src = images[prevIndex].src;
+      }
+
+      function openLightbox() {
+        if (filteredIndexes.length === 0) return;
+        lastFocusedElement = document.activeElement;
+        renderLightboxImage();
+        lightbox.classList.remove("opacity-0", "invisible");
+        lightbox.classList.add("opacity-100", "visible");
+        lightbox.setAttribute("aria-hidden", "false");
+        document.body.style.overflow = "hidden";
+        closeBtn.focus();
+      }
+
+      function closeLightbox() {
+        // Move focus out of the lightbox BEFORE hiding it from assistive tech,
+        // otherwise a focused descendant inside an aria-hidden ancestor is an
+        // invalid state that Chrome blocks/warns about.
+        if (lightbox.contains(document.activeElement)) {
+          document.activeElement.blur();
+        }
+        lightbox.classList.add("opacity-0", "invisible");
+        lightbox.classList.remove("opacity-100", "visible");
+        lightbox.setAttribute("aria-hidden", "true");
+        document.body.style.overflow = "";
+        if (lastFocusedElement) {
+          lastFocusedElement.focus();
+          lastFocusedElement = null;
+        }
+      }
+      function flashButton(button) {
+        button.classList.add("keyboard-hover");
+
+        setTimeout(() => {
+          button.classList.remove("keyboard-hover");
+        }, 180);
+      }
+      function navigate(direction) {
+        if (filteredIndexes.length <= 1 || isNavigating) return;
+
+        isNavigating = true;
+
+        lightboxImg.classList.add("opacity-0", "scale-95", "blur-[2px]");
+
+        setTimeout(() => {
+          queuePointer =
+            direction === "next"
+              ? (queuePointer + 1) % filteredIndexes.length
+              : (queuePointer - 1 + filteredIndexes.length) %
+                filteredIndexes.length;
+
+          renderLightboxImage();
+
+          lightboxImg.classList.remove("opacity-0", "scale-95", "blur-[2px]");
+
+          isNavigating = false;
+        }, 180);
+      }
+
+      closeBtn.addEventListener("click", closeLightbox);
+      nextBtn.addEventListener("click", () => navigate("next"));
+      prevBtn.addEventListener("click", () => navigate("prev"));
+
+      lightbox.addEventListener("click", (e) => {
+        if (e.target === lightbox) closeLightbox();
+      });
+
+      function flashCloseButton() {
+        closeBtn.classList.add("keyboard-hover-close");
+
+        setTimeout(() => {
+          closeBtn.classList.remove("keyboard-hover-close");
+        }, 180);
+      }
+      document.addEventListener("keydown", (e) => {
+        if (lightbox.classList.contains("invisible")) return;
+
+        if (e.key === "Escape") {
+          flashCloseButton();
+          closeLightbox();
+          return;
+        }
+        if (e.key === "ArrowRight") {
+          flashButton(nextBtn);
+          navigate("next");
+          return;
+        }
+
+        if (e.key === "ArrowLeft") {
+          flashButton(prevBtn);
+          navigate("prev");
+          return;
+        }
+      });
+      // MOBILE SWIPE SUPPORT
+      // ============================================================
+
+      lightbox.addEventListener(
+        "touchstart",
+        (e) => {
+          touchStartX = e.changedTouches[0].clientX;
+        },
+        { passive: true },
+      );
+
+      lightbox.addEventListener(
+        "touchend",
+        (e) => {
+          touchEndX = e.changedTouches[0].clientX;
+
+          const swipeDistance = touchStartX - touchEndX;
+          const minSwipe = 50;
+
+          if (Math.abs(swipeDistance) < minSwipe) return;
+
+          if (swipeDistance > 0) {
+            navigate("next");
+          } else {
+            navigate("prev");
+          }
+        },
+        { passive: true },
+      );
+
+      // ============================================================
+      // INIT
+      // ============================================================
+      renderGallery();
+    </script>
+  </body>
+</html>

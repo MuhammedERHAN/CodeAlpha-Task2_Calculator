@@ -1,0 +1,228 @@
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>CODE X CALC</title>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      .key-pressed {
+        background-color: rgba(0, 0, 0, 0.2) !important;
+        transform: scale(0.9) rotate(-3deg) !important;
+        box-shadow: 0 0 20px #fb7c14 !important;
+      }
+      .key-pressed.key-pressed-primary {
+        background-color: #f97316 !important;
+      }
+    </style>
+  </head>
+  <body
+    class="font-[Inter] min-h-dvh overflow-x-hidden bg-linear-[45deg,#1e211e,#3a4452]"
+  >
+    <div class="min-h-dvh flex items-center justify-center px-4 py-1">
+      <div
+        class="w-[min(94vw,400px)] [@media(max-height:600px)]:p-3 p-4 sm:p-5 md:p-6 select-none bg-black/20 backdrop-blur-xl rounded-3xl border-2 border-white/10"
+      >
+        <h2
+          class="text-center text-white/70 text-xl sm:text-2xl font-bold tracking-[0.20em] cursor-default select-none mb-2"
+        >
+          CODE X CALC <sub class="text-xl text-white/80">©</sub>
+        </h2>
+
+        <div class="bg-transparent mb-3">
+          <input
+            aria-label="Calculator Display"
+            autocomplete="off"
+            placeholder="0"
+            type="text"
+            id="display"
+            readonly
+            class="w-full bg-black/20 text-white/90 text-right text-xl sm:text-2xl overflow-x-auto whitespace-nowrap font-bold rounded-xl outline-none border border-[#717377] py-3 px-5 shadow-inner placeholder:text-white/40"
+          />
+          <p
+            id="preview"
+            aria-live="polite"
+            class="text-right text-xs text-white/40 mt-1 h-4"
+          ></p>
+        </div>
+        <div
+          class="grid grid-cols-4 gap-1.5 w-full text-xl sm:text-2xl font-semibold font-sans justify-items-center"
+        >
+          <button
+            data-key="Escape"
+            aria-label="Clear display"
+            class="p-3 shadow-[-8px_-8px_15px_rgba(255,255,255,0.1)] bg-transparent border-none rounded-full w-full aspect-square max-w-16 hover:bg-black/20 cursor-pointer text-[#6dee0a] hover:scale-95 active:scale-90 transition-all duration-300 ease-in-out hover:-rotate-3 hover:shadow-[0_0_20px_#fb7c14]"
+            onclick="clearDisplay()"
+            type="button"
+          >
+            C
+          </button>
+          <button
+            data-key="%"
+            class="p-3 shadow-[-8px_-8px_15px_rgba(255,255,255,0.1)] bg-transparent border-none rounded-full w-full aspect-square max-w-16 hover:bg-black/20 cursor-pointer text-[#6dee0a] hover:scale-95 active:scale-90 hover:shadow-[0_0_20px_#fb7c14] transition-all duration-300 ease-in-out hover:-rotate-3"
+            onclick="addToDisplay('%')"
+            type="button"
+          >
+            %
+          </button>
+          <button
+            data-key="/"
+            class="p-3 shadow-[-8px_-8px_15px_rgba(255,255,255,0.1)] bg-transparent border-none rounded-full w-full aspect-square max-w-16 hover:bg-black/20 cursor-pointer text-[#6dee0a] hover:scale-95 active:scale-90 hover:shadow-[0_0_20px_#fb7c14] transition-all duration-300 ease-in-out hover:-rotate-3"
+            onclick="addToDisplay('/')"
+            type="button"
+          >
+            ÷
+          </button>
+          <button
+            data-key="Backspace"
+            aria-label="Delete last character"
+            class="p-3 shadow-[-8px_-8px_15px_rgba(255,255,255,0.1)] bg-transparent border-none rounded-full w-full aspect-square max-w-16 hover:bg-black/20 cursor-pointer text-[#6dee0a] hover:scale-95 active:scale-90 hover:shadow-[0_0_20px_#fb7c14] transition-all duration-300 ease-in-out hover:-rotate-3"
+            onclick="Backspace()"
+            type="button"
+          >
+            DEL
+          </button>
+
+          <button
+            data-key="7"
+            class="p-3 text-[#ffffff] bg-transparent border-none rounded-full w-full aspect-square max-w-16 hover:bg-black/20 cursor-pointer shadow-[-8px_-8px_15px_rgba(255,255,255,0.1)] hover:scale-95 active:scale-90 hover:shadow-[0_0_20px_#fb7c14] transition-all duration-300 ease-in-out hover:-rotate-3"
+            onclick="addToDisplay('7')"
+            type="button"
+          >
+            7
+          </button>
+          <button
+            data-key="8"
+            class="p-3 text-[#ffffff] bg-transparent border-none rounded-full w-full aspect-square max-w-16 hover:bg-black/20 cursor-pointer shadow-[-8px_-8px_15px_rgba(255,255,255,0.1)] hover:scale-95 active:scale-90 hover:shadow-[0_0_20px_#fb7c14] transition-all duration-300 ease-in-out hover:-rotate-3"
+            onclick="addToDisplay('8')"
+            type="button"
+          >
+            8
+          </button>
+          <button
+            data-key="9"
+            class="p-3 text-[#ffffff] bg-transparent border-none rounded-full w-full aspect-square max-w-16 hover:bg-black/20 cursor-pointer shadow-[-8px_-8px_15px_rgba(255,255,255,0.1)] hover:scale-95 active:scale-90 hover:shadow-[0_0_20px_#fb7c14] transition-all duration-300 ease-in-out hover:-rotate-3"
+            onclick="addToDisplay('9')"
+            type="button"
+          >
+            9
+          </button>
+          <button
+            data-key="+"
+            class="p-3 text-[#6dee0a] bg-transparent border-none rounded-full w-full aspect-square max-w-16 hover:bg-black/20 cursor-pointer shadow-[-8px_-8px_15px_rgba(255,255,255,0.1)] hover:scale-95 active:scale-90 hover:shadow-[0_0_20px_#fb7c14] transition-all duration-300 ease-in-out hover:-rotate-3"
+            onclick="addToDisplay('+')"
+            type="button"
+          >
+            +
+          </button>
+
+          <button
+            data-key="4"
+            class="p-3 text-[#ffffff] bg-transparent border-none rounded-full w-full aspect-square max-w-16 hover:bg-black/20 cursor-pointer shadow-[-8px_-8px_15px_rgba(255,255,255,0.1)] hover:scale-95 active:scale-90 hover:shadow-[0_0_20px_#fb7c14] transition-all duration-300 ease-in-out hover:-rotate-3"
+            onclick="addToDisplay('4')"
+            type="button"
+          >
+            4
+          </button>
+          <button
+            data-key="5"
+            class="p-3 text-[#ffffff] bg-transparent border-none rounded-full w-full aspect-square max-w-16 hover:bg-black/20 cursor-pointer shadow-[-8px_-8px_15px_rgba(255,255,255,0.1)] hover:scale-95 active:scale-90 hover:shadow-[0_0_20px_#fb7c14] transition-all duration-300 ease-in-out hover:-rotate-3"
+            onclick="addToDisplay('5')"
+            type="button"
+          >
+            5
+          </button>
+          <button
+            data-key="6"
+            class="p-3 text-[#ffffff] bg-transparent border-none rounded-full w-full aspect-square max-w-16 hover:bg-black/20 cursor-pointer shadow-[-8px_-8px_15px_rgba(255,255,255,0.1)] hover:scale-95 active:scale-90 hover:shadow-[0_0_20px_#fb7c14] transition-all duration-300 ease-in-out hover:-rotate-3"
+            onclick="addToDisplay('6')"
+            type="button"
+          >
+            6
+          </button>
+          <button
+            data-key="-"
+            class="p-3 text-[#6dee0a] bg-transparent border-none rounded-full w-full aspect-square max-w-16 hover:bg-black/20 cursor-pointer shadow-[-8px_-8px_15px_rgba(255,255,255,0.1)] hover:scale-95 active:scale-90 hover:shadow-[0_0_20px_#fb7c14] transition-all duration-300 ease-in-out hover:-rotate-3"
+            onclick="addToDisplay('-')"
+            type="button"
+          >
+            -
+          </button>
+
+          <button
+            data-key="1"
+            class="p-3 text-[#ffffff] bg-transparent border-none rounded-full w-full aspect-square max-w-16 hover:bg-black/20 cursor-pointer shadow-[-8px_-8px_15px_rgba(255,255,255,0.1)] hover:scale-95 active:scale-90 hover:shadow-[0_0_20px_#fb7c14] transition-all duration-300 ease-in-out hover:-rotate-3"
+            onclick="addToDisplay('1')"
+            type="button"
+          >
+            1
+          </button>
+          <button
+            data-key="2"
+            class="p-3 text-[#ffffff] bg-transparent border-none rounded-full w-full aspect-square max-w-16 hover:bg-black/20 cursor-pointer shadow-[-8px_-8px_15px_rgba(255,255,255,0.1)] hover:scale-95 active:scale-90 hover:shadow-[0_0_20px_#fb7c14] transition-all duration-300 ease-in-out hover:-rotate-3"
+            onclick="addToDisplay('2')"
+            type="button"
+          >
+            2
+          </button>
+          <button
+            data-key="3"
+            class="p-3 text-[#ffffff] bg-transparent border-none rounded-full w-full aspect-square max-w-16 hover:bg-black/20 cursor-pointer shadow-[-8px_-8px_15px_rgba(255,255,255,0.1)] hover:scale-95 active:scale-90 hover:shadow-[0_0_20px_#fb7c14] transition-all duration-300 ease-in-out hover:-rotate-3"
+            onclick="addToDisplay('3')"
+            type="button"
+          >
+            3
+          </button>
+          <button
+            data-key="*"
+            class="p-3 text-[#6dee0a] bg-transparent border-none rounded-full w-full aspect-square max-w-16 hover:bg-black/20 cursor-pointer shadow-[-8px_-8px_15px_rgba(255,255,255,0.1)] hover:scale-95 active:scale-90 hover:shadow-[0_0_20px_#fb7c14] transition-all duration-300 ease-in-out hover:-rotate-3"
+            onclick="addToDisplay('*')"
+            type="button"
+          >
+            ×
+          </button>
+
+          <button
+            data-key="."
+            class="p-3 text-[#6dee0a] bg-transparent border-none rounded-full w-full aspect-square max-w-16 hover:bg-black/20 cursor-pointer shadow-[-8px_-8px_15px_rgba(255,255,255,0.1)] hover:scale-95 active:scale-90 hover:shadow-[0_0_20px_#fb7c14] transition-all duration-300 ease-in-out hover:-rotate-3"
+            onclick="addToDisplay('.')"
+            type="button"
+          >
+            .
+          </button>
+          <button
+            data-key="0"
+            class="p-3 text-[#ffffff] bg-transparent border-none rounded-full w-full aspect-square max-w-16 hover:bg-black/20 cursor-pointer shadow-[-8px_-8px_15px_rgba(255,255,255,0.1)] hover:scale-95 active:scale-90 hover:shadow-[0_0_20px_#fb7c14] transition-all duration-300 ease-in-out hover:-rotate-3"
+            onclick="addToDisplay('0')"
+            type="button"
+          >
+            0
+          </button>
+          <button
+            data-key="Enter"
+            id="equalsBtn"
+            aria-label="Calculate"
+            class="p-3 hover:bg-orange-500 text-[#ffffff] border-none rounded-full w-full aspect-square max-w-16 cursor-pointer shadow-[-8px_-8px_15px_rgba(255,255,255,0.1)] bg-[#fb7c14] hover:scale-95 active:scale-90 transition-all duration-300 ease-in-out hover:-rotate-3"
+            onclick="calculate()"
+            type="button"
+          >
+            =
+          </button>
+        </div>
+        <footer
+          class="mt-4 text-center text-[11px] text-white/35 tracking-wide select-none"
+        >
+          Built with HTML • Tailwind CSS • JavaScript
+        </footer>
+      </div>
+    </div>
+
+    <script src="calc.js"></script>
+  </body>
+</html>
