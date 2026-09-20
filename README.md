@@ -5,7 +5,7 @@ A premium, responsive calculator built with **HTML5, Tailwind CSS, and Vanilla J
 Code X Calc is designed as a polished calculator experience with responsive layouts, real-time expression preview, contextual percentage calculations, keyboard support, input validation, error handling, and interactive button feedback.
 
 🔗 **Live Demo:**  
-<!-- Add your GitHub Pages URL here -->
+https://muhammederhan.github.io/CodeAlpha-Task2_Calculator/
 
 💻 **Repository:**  
 https://github.com/MuhammedERHAN/CodeAlpha-Task2_Calculator
