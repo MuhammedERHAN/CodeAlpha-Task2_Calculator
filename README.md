@@ -8,7 +8,7 @@ Code X Calc is designed as a polished calculator experience with responsive layo
 <!-- Add your GitHub Pages URL here -->
 
 💻 **Repository:**  
-<!-- Add your GitHub repository URL here -->
+https://github.com/MuhammedERHAN/CodeAlpha-Task2_Calculator
 
 **✨ ABOUT THE PROJECT** :-
 
@@ -19,6 +19,7 @@ Instead of building only a basic button-based calculator, the project focuses on
 The calculator supports standard arithmetic operations including addition, subtraction, multiplication, and division, along with decimal values and percentage calculations.
 
 This project was developed as **Task 2 of the CodeAlpha Frontend Development Internship**, with a focus on applying practical frontend development principles using HTML, Tailwind CSS, and Vanilla JavaScript.
+
 
 **🚀 KEY FEATURES** :-
 
@@ -37,6 +38,7 @@ This project was developed as **Task 2 of the CodeAlpha Frontend Development Int
 - ✨ **Interactive Button Feedback** — Provides visual feedback for keyboard presses and button interactions
 - 📱 **Responsive Layout** — Adapts to different viewport sizes including mobile, tablet, and desktop
 - 🎯 **Touch-Friendly Controls** — Uses large circular controls designed for comfortable interaction
+  
 
 **🎨 UI & USER EXPERIENCE** :-
 
@@ -60,6 +62,7 @@ The UI combines:
 - Touch-friendly controls
 - Compact layout optimization for smaller viewport heights
 - Clear visual hierarchy
+  
 
 **♿ ACCESSIBILITY** :-
 
@@ -74,6 +77,7 @@ Accessibility considerations were included throughout the calculator interface.
 - Native button interaction behavior
 - Visible visual feedback for keyboard interactions
 - `type="button"` attributes to prevent unintended form behavior
+  
 
 **⚡ PERFORMANCE CONSIDERATIONS** :-
 
@@ -87,6 +91,7 @@ The project keeps the implementation lightweight by using browser-native technol
 - Browser-native keyboard event handling
 - Tailwind CSS utility-based styling
 - No unnecessary external JavaScript libraries
+
 
 **🧠 FRONTEND ENGINEERING HIGHLIGHTS** :-
 
@@ -109,6 +114,7 @@ This project demonstrates practical experience with:
 - Accessibility fundamentals
 - Git version control
 - GitHub Pages deployment
+  
 
 **🛠️ TECHNOLOGY STACK** :-
 
@@ -117,8 +123,6 @@ This project demonstrates practical experience with:
 - HTML5
 - Tailwind CSS
 - Vanilla JavaScript (ES6+)
-- CSS Animations & Transitions
-- Inter Font
 
 **Development & Deployment**
 
